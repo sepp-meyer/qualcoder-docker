@@ -1,0 +1,62 @@
+# Dockerfile.qualcoder
+
+FROM python:3.12-slim
+
+# Umgebungsvariablen setzen, um interaktive Dialoge zu vermeiden
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Installiere systemseitige Abhängigkeiten
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    qtbase5-dev \
+    libgl1-mesa-dev \
+    libglib2.0-0 \
+    libxcb-cursor0 \
+    git \
+    vlc \
+    xvfb \
+    fluxbox \
+    wget \
+    unzip \
+    nano \
+    && rm -rf /var/lib/apt/lists/*  # Entferne temporäre Dateien
+
+# Installiere noVNC
+RUN wget https://github.com/novnc/noVNC/archive/refs/tags/v1.4.0.zip -O /noVNC.zip && \
+    unzip /noVNC.zip -d / && \
+    mv /noVNC-1.4.0 /noVNC && \
+    rm /noVNC.zip
+
+# Installiere websockify über pip
+RUN pip install websockify
+
+# Setze das Arbeitsverzeichnis
+WORKDIR /app
+
+# Klone das QualCoder-Repository
+RUN git clone https://github.com/ccbogel/QualCoder.git
+
+WORKDIR /app/QualCoder
+
+# Erstelle eine virtuelle Umgebung
+RUN python3.12 -m venv env
+
+# Upgrade von pip, setuptools und wheel
+RUN /bin/bash -c "source env/bin/activate && pip install --upgrade pip setuptools wheel"
+
+# Installiere sip und PyQt6
+RUN /bin/bash -c "source env/bin/activate && pip install sip==6.7.9 PyQt6==6.5.0 PyQt6-sip==13.5.0"
+
+# Installiere weitere Abhängigkeiten von QualCoder
+RUN /bin/bash -c "source env/bin/activate && pip install -r requirements.txt"
+
+# Exponiere den noVNC-Port
+EXPOSE 8080
+
+# Kopiere das Startskript
+COPY start-qualcoder.sh /app/start-qualcoder.sh
+RUN chmod +x /app/start-qualcoder.sh
+
+# Starte QualCoder und noVNC
+CMD ["/app/start-qualcoder.sh"]
+

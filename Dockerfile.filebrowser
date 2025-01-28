@@ -1,0 +1,15 @@
+# Dockerfile.filebrowser
+
+FROM filebrowser/filebrowser:s6
+
+# Setze das Arbeitsverzeichnis
+WORKDIR /srv
+
+# Exponiere den FileBrowser-Port
+EXPOSE 80
+
+# Volumen für Daten
+VOLUME /srv
+
+# Startbefehl (standardmäßig bereits im Image definiert)
+

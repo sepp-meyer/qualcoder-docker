@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  qualcoder:
+    build:
+      context: .
+      dockerfile: Dockerfile.qualcoder
+    container_name: qualcoder-docker
+    ports:
+      - "8080:8080"  # noVNC für QualCoder
+    volumes:
+      - ./data:/app/QualCoder/data
+    environment:
+      - DISPLAY=:0
+    restart: unless-stopped
+
+  filebrowser:
+    image: filebrowser/filebrowser:s6
+    container_name: filebrowser-docker
+    ports:
+      - "8081:80"  # FileBrowser
+    volumes:
+      - ./data:/srv
+    restart: unless-stopped
+
