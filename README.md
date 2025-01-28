@@ -312,3 +312,8 @@ For any questions, issues, or suggestions, please open an issue in the [GitHub r
 ---
 
 **Happy Coding!** 🚀
+
+
+---
+
+## Vieleicht nimmt man auch einfach einen kleinen webtop, bei dem qualcoder bereits installiert ist
